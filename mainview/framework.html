@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Monica</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../fonts/fonts.css" />
+    <link rel="stylesheet" href="style.css" />
+    <!-- import thirdpart library -->
+    <link rel="stylesheet" href="../node_modules/mdui/dist/css/mdui.css" />
+    <link rel="stylesheet" type="text/css" href="../node_modules/lato-font/css/lato-font.css" />
+    <script src="../node_modules/mdui/dist/js/mdui.js"></script>
+    <script src="../node_modules/vue/dist/vue.js"></script>
+    <script src="../utils/html2canvas.js"></script>
+    <script src="../utils/particle-boom.umd.js"></script>
+    <link rel="stylesheet" href="../utils/codemirror/codemirror.css" />
+</head>
+
+<body style="font-family: 'Quicksand', 'MiSans'">
+    <div id="vue-mount" style="display: none" v-show="true">
+        <!--
+                --------------------------------- Title Bar ------------------------------------
+            -->
+        <div class="titlebar" style="height: 44px; align-content: center">
+            <!-- 关闭按钮 -->
+            <button class="mdui-btn mdui-btn-icon" style="
+                        position: fixed;
+                        right: 7px;
+                        top: 4.5px;
+                        -webkit-app-region: no-drag;
+                        z-index: 11;
+                    " id="closebtn" v-show="platform!=='darwin'&&platform!=='web'"
+                onclick="remote.getCurrentWindow().close()" mdui-tooltip="{content: 'Close'}">
+                <em class="mdui-icon material-icons" style="font-size: 20px; margin-top: 0.5px">close</em>
+            </button>
+            <!-- 最大化界面 -->
+            <button class="mdui-btn mdui-btn-icon" style="
+                        position: fixed;
+                        right: 52px;
+                        top: 4.5px;
+                        -webkit-app-region: no-drag;
+                        z-index: 11;
+                    " v-show="platform!=='darwin'&&platform!=='web'" id="maxbtn" mdui-tooltip="{content: 'Maximize'}"
+                onclick="window.maximizeBtn()">
+                <span class="material-icons-outlined" style="margin-left: 5px; margin-top: 0">
+                    crop_square
+                </span>
+            </button>
+            <!-- 最小化界面 -->
+            <button class="mdui-btn mdui-btn-icon" style="
+                        position: fixed;
+                        right: 97px;
+                        top: 4.5px;
+                        -webkit-app-region: no-drag;
+                        z-index: 11;
+                    " id="minbtn" v-show="platform!=='darwin'&&platform!=='web'"
+                onclick="remote.getCurrentWindow().minimize()" style="font-size: small"
+                mdui-tooltip="{content: 'Minimize'}">
+                <div style="
+                            font-size: 18px;
+                            transform: scaleX(0.7);
+                            margin-top: 0;
+                        ">
+                    —
+                </div>
+            </button>
+            <!-- 打开开发者工具 -->
+            <button class="mdui-btn mdui-btn-icon" v-show="settings.dev.allowDevTools" style="
+                        position: fixed;
+                        top: 4.5px;
+                        -webkit-app-region: no-drag;
+                        z-index: 11;
+                        display: none;
+                    " v-bind:style="{ right: platform=='darwin'?'7px':'142px'}" id="minbtn"
+                onclick="remote.getCurrentWebContents().openDevTools({ mode: 'detach' })"
+                mdui-tooltip="{content: 'Open DevTools'}">
+                <em style="font-size: 20px; margin-top: 0" class="mdui-icon material-icons">code</em>
+            </button>
+            <div class="mdui-color-theme clickable" style="
+                        height: 28px;
+                        width: 4px;
+                        border-radius: 2px;
+                        position: fixed;
+                        top: 9px;
+                    " v-bind:style="{ left: platform=='darwin'?'80px':'10px'}"></div>
+
+            <!-- Show App Name -->
+            <div style="display: inline-block; padding-top: 8px"
+                v-bind:style="{ marginLeft: platform=='darwin'?'92px':'22px'}">
+                <span class="dotfont">
+                    <span style="margin-left: 2px; margin-right: 2px">Monica</span></span>
+                <div class="mdui-text-color-theme" style="font-size: 10px; margin-left: -1px">
+                    {{language.app.name}}
+                </div>
+            </div>
+
+            <!-- 切换菜单 -->
+            <div class="clickable tab-bar" style="
+                        width: 355px;
+                        top: 4.5px;
+                        position: fixed;
+                        left: calc(50vw - 180px);
+                        margin-top: 1px;
+                    ">
+                <!-- 虚拟见人 -->
+                <button v-bind:class="tab=='settings'?'mdui-btn select':'mdui-btn'"
+                    onclick="sysmocapApp.tab='settings'">
+                    <em class="mdui-icon material-icons">filter_center_focus</em>{{language.titlebar.settings}}
+                </button>
+                <!-- 模型库 -->
+                <button v-bind:class="tab=='model'?'mdui-btn select':'mdui-btn'" onclick="sysmocapApp.tab='model'">
+                    <span class="material-icons-outlined">
+                        account_balance </span>{{language.titlebar.modelLib}}
+                </button>
+                <!-- 动作捕捉 -->
+                <button v-bind:class="tab=='render'?'mdui-btn select':'mdui-btn'" onclick="sysmocapApp.tab='render'">
+                    <em class="mdui-icon material-icons">filter_center_focus</em>{{language.titlebar.mocap}}
+                </button>
+            </div>
+        </div>
+        <div class="line" style="position: fixed; top: 44px"></div>
+
+
+        <!-- 主界面内容  -->
+        <div style="padding: 10px 20px; margin-top: 44px">
+            <!-- 模型库 -->
+            <div v-show="tab=='model'">
+                <div id="rightclick" style="
+                            display: none;
+                            position: fixed;
+                            top: 0;
+                            right: 0;
+                            height: 100%;
+                            width: 100%;
+                            background: #fff0;
+                            z-index: 999;
+                        "></div>
+                <div id="rightmenu" class="card" style="transform: scaleY(0)">
+                    <div id="btnopen" class="carditem">
+                        <em class="mdui-icon material-icons cardicon">open_in_new</em>{{language.tabModelLib.open}}
+                    </div>
+                    <div class="line2"></div>
+                    <div id="btndefault" class="carditem">
+                        <em class="mdui-icon material-icons cardicon">check</em>{{language.tabModelLib.setAsDefault}}
+                    </div>
+                    <div class="line2"></div>
+                    <div id="btnshow" class="carditem">
+                        <em
+                            class="mdui-icon material-icons cardicon">folder_open</em>{{language.tabModelLib.showInFinder}}
+                    </div>
+                    <div class="line2"></div>
+                    <div id="btnremove" class="carditem">
+                        <em class="mdui-icon material-icons cardicon">delete</em>{{language.tabModelLib.remove}}
+                    </div>
+                </div>
+                <!------- User Model ------->
+                <h1 class="mdui-text-color-theme" style="display: inline-block; vertical-align: middle">
+                    {{language.tabModelLib.userModel}}
+                </h1>
+                <button class="mdui-btn xf-button" style="
+                            display: inline-block;
+                            margin: 10px;
+                            height: 30px;
+                            line-height: 30px;
+                        "
+                    v-on:click="showModelImporter = !showModelImporter;modelImporterName=modelImporterType=modelImporterImg=''">
+                    <em
+                        class="mdui-icon material-icons">{{showModelImporter?'expand_less':'add'}}</em>{{showModelImporter?language.tabModelLib.optHide:language.tabModelLib.optAdd}}
+                </button>
+                <!------- Model Importer ------->
+                <div class="model-importer"
+                    v-bind:style="{height:showModelImporter?'130px':'0px',marginBottom:showModelImporter?'10px':'0px'}">
+                    <div id="drag-area" style="background-size: cover"
+                        v-bind:style="{width:showModelImporter==2?'calc(45% - 18px)':'calc(100% - 36px)',background:modelImporterImg==''?'':'url('+modelImporterImg+') no-repeat center center',backgroundSize:modelImporterImg==''?'':'cover'}">
+                        <div
+                            v-bind:style="{marginLeft:showModelImporter==2?'8px':'40px',marginTop:showModelImporter==2?'38px':'20px'}">
+                            <p v-show="showModelImporter==1">
+                                {{language.tabModelLib.dragModel}}
+                            </p>
+                            <p v-show="showModelImporter==1">
+                                {{language.tabModelLib.suppotFormat}}
+                                <a href="#">{{language.tabModelLib.here}}</a>
+                            </p>
+                            <p v-show="showModelImporter==2&&modelImporterImg==''">
+                                {{language.tabModelLib.dragImage}}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="modelInfo">
+                        <label>Model Name</label>
+                        <emnput class="xf-input" type="text" v-model="modelImporterName" />
+                        <button class="mdui-btn xf-button-2" style="
+                                    height: 24px !important;
+                                    line-height: 24px !important;
+                                    width: 80px;
+                                    font-size: 12px;
+                                    margin-top: 20px;
+                                    margin-left: 130px;
+                                " onclick="window.addUserModels()">
+                            <em class="mdui-icon material-icons"
+                                style="font-size: 18px; margin-left: -8px">check</em>finish
+                        </button>
+                    </div>
+                </div>
+                <!-- End Model Importer -->
+
+                <div class="flex-container">
+                    <div v-if="settings.ui.useNewModelUI" class="model-item-new user-model" v-for="model in userModels"
+                        v-on:click="require('electron').ipcRenderer.send('openModelViewer', {model:model,backgroundColor:$event.currentTarget.style.getPropertyValue('--md-sys-color-primary-container')?$event.currentTarget.style.getPropertyValue('--md-sys-color-primary-container'):document.body.style.getPropertyValue('--md-sys-color-primary-container'),color:$event.currentTarget.style.getPropertyValue('--md-sys-color-primary')?$event.currentTarget.style.getPropertyValue('--md-sys-color-primary'):document.body.style.getPropertyValue('--md-sys-color-primary'),textColor:$event.currentTarget.style.getPropertyValue('--md-sys-color-on-primary-container')?$event.currentTarget.style.getPropertyValue('--md-sys-color-on-primary-container'):document.body.style.getPropertyValue('--md-sys-color-on-primary-container'),useGlass:settings.ui.useGlass});">
+                        <img class="my-img" v-bind:src="model.picBg" />
+                        <em class="mdui-icon material-icons" v-show="model.picBg==''">
+                            person_outline</em>
+                        <div class="desc">
+                            <h2>{{model.name}}</h2>
+                            <div class="type">
+                                {{model.type.toUpperCase()}}
+                            </div>
+                            <div style="
+                                        margin-left: calc(100% - 187px);
+                                        text-align: left;
+                                        margin-top: -17px;
+                                        color: var(--md-sys-color-primary);
+                                    " v-show="selectModel==JSON.stringify(model)">
+                                <span class="material-icons-outlined" style="font-size: 16px"
+                                    mdui-tooltip="{content: '默认使用的形象'}">
+                                    done
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-for="i in [1,2,3,4,5,6]" class="model-item-new" style="
+                                visibility: hidden;
+                                height: 1px;
+                                margin-top: 0;
+                                margin-bottom: 0;
+                            "></div>
+                </div>
+                <!------- Build-in Model ------->
+                <h1 class="mdui-text-color-theme">
+                    {{language.tabModelLib.buildinModel}}
+                </h1>
+                <div class="flex-container" id="userModels">
+                    <div v-if="settings.ui.useNewModelUI" class="model-item-new buildin-model" v-for="model in builtIn"
+                        v-on:click="require('electron').ipcRenderer.send('openModelViewer', {model:model,backgroundColor:$event.currentTarget.style.getPropertyValue('--md-sys-color-primary-container')?$event.currentTarget.style.getPropertyValue('--md-sys-color-primary-container'):document.body.style.getPropertyValue('--md-sys-color-primary-container'),color:$event.currentTarget.style.getPropertyValue('--md-sys-color-primary')?$event.currentTarget.style.getPropertyValue('--md-sys-color-primary'):document.body.style.getPropertyValue('--md-sys-color-primary'),textColor:$event.currentTarget.style.getPropertyValue('--md-sys-color-on-primary-container')?$event.currentTarget.style.getPropertyValue('--md-sys-color-on-primary-container'):document.body.style.getPropertyValue('--md-sys-color-on-primary-container'),useGlass:settings.ui.useGlass});">
+                        <img class="my-img" v-bind:src="model.picBg" />
+                        <div class="desc">
+                            <h2>{{model.name}}</h2>
+                            <div class="type">
+                                {{model.type.toUpperCase()}}
+                            </div>
+                            <div style="
+                                        margin-left: calc(100% - 187px);
+                                        text-align: left;
+                                        margin-top: -17px;
+                                        color: var(--md-sys-color-primary);
+                                    " v-show="selectModel==JSON.stringify(model)">
+                                <span class="material-icons-outlined" style="font-size: 16px"
+                                    mdui-tooltip="{content: '默认使用的形象'}">
+                                    done
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="!settings.ui.useNewModelUI" v-for="model in builtIn" class="mdui-ripple model-item"
+                        v-on:click="require('electron').ipcRenderer.send('openModelViewer', {model:model,backgroundColor:bg,color:'#fff',useGlass:settings.ui.useGlass});">
+                        <img v-bind:src="model.pic" style="
+                                    width: 90px;
+                                    height: 100px;
+                                    object-fit: contain;
+                                " />
+                        <div style="margin-top: -110px; margin-left: 100px">
+                            <h1>{{model.name}}</h1>
+                            <div class="mdui-color-theme" style="
+                                        width: 35px;
+                                        height: 18px;
+                                        border-radius: 5px;
+                                        margin-top: -8px;
+                                        font-size: 10px;
+                                        line-height: 18px;
+                                        text-align: center;
+                                        filter: opacity(0.7);
+                                    ">
+                                {{model.type.toUpperCase()}}
+                            </div>
+                        </div>
+                    </div>
+                    <div v-for="i in [1,2,3,4,5,6]" class="model-item-new" style="visibility: hidden; height: 1px">
+                    </div>
+                    <div v-for="i in [1,2,3,4,5,6]" class="model-item" style="visibility: hidden; height: 1px"></div>
+                </div>
+            </div>
+
+            <!-- 动作捕捉页面 -->
+            <div v-show="tab=='render'">
+                <div style="width: 750px; margin: auto">
+                    {{language.tabMocap.chooseModel}}<select class="mdui-select" id="demo-js" v-model="selectModel">
+                        <optgroup v-bind:label="language.tabModelLib.userModel">
+                            <option v-for="model in userModels" v-bind:value="JSON.stringify(model)">
+                                {{model.name}}
+                            </option>
+                        </optgroup>
+                        <optgroup v-bind:label="language.tabModelLib.buildinModel">
+                            <option v-for="model in builtIn" v-bind:value="JSON.stringify(model)">
+                                {{model.name}}
+                            </option>
+                        </optgroup>
+                    </select>
+                    <span style="margin-left: 60px"></span>
+                    {{language.tabMocap.dataSource}}
+                    <label class="mdui-radio">
+                        <input type="radio" name="group1" value="camera" v-model="videoSource" />
+                        <em class="mdui-radio-icon"></em>
+                        {{language.tabMocap.camera}}
+                    </label>
+                    <span style="margin-left: 30px"></span>
+                    <label class="mdui-radio">
+                        <input type="radio" name="group1" value="file" v-model="videoSource" />
+                        <em class="mdui-radio-icon"></em>
+                        {{language.tabMocap.videoFile}}
+                    </label>
+
+                    <span style="margin-left: 60px"></span>
+                    <button class="mdui-btn xf-button" onclick="window.startMocap(this)">
+                        <em class="mdui-icon material-icons">play_arrow</em>{{language.tabMocap.start}}
+                    </button>
+                    <div style="margin-top: 10px" v-show="videoSource == 'file'">
+                        <button class="mdui-btn xf-button" id="chooseFile">
+                            选择视频文件
+                        </button>
+                        <span style="margin-left: 10px">已选择视频文件：{{videoPath==''?'未选择':videoPath}}</span>
+                    </div>
+                </div>
+                <iframe id="foo" src="about:blank" title="Inline Frame Example" style="
+                            width: calc(100vw - 40px);
+                            height: calc((100vw - 40px) * 10 / 32 + 240px);
+                            margin-top: 10px;
+                            border: none;
+                        ">
+                </iframe>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="framework.js" type="module" async></script>
+
+    <script>
+        if (typeof require != "undefined") {
+            // import electron remote
+            remote = require("@electron/remote");
+
+            ipcRenderer = require("electron").ipcRenderer;
+        }
+    </script>
+</body>
+
+</html>
