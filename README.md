@@ -1,7 +1,6 @@
 # Monica: an amazing virtual anchor
 
 ## Introduction
-
 Monica, named after a character in my favorite show "Friends", is a stunning virtual anchor system. She is another self in the online world, please embrace her! If you are afraid to show your face, you can use it anywhere, such as live streaming, lecturing, various video conferences, etc. I have a nice idea. For online classes, opening the video would be an invasion of privacy, but with Monica, the teacher can indirectly see what each student is listening to, or at least make sure the students are looking at the screen.
 
 ## Technologies
@@ -11,13 +10,17 @@ Monica, named after a character in my favorite show "Friends", is a stunning vir
 - Reference: [vtuber](https://github.com/YunYouJun/vtuber),  [Amazing_MediaPipe_Tools](https://github.com/lif314/Amazing_MediaPipe_Tools),  [Material Design](https://m3.material.io/)
 
 ## How to run 
+- clone
+```shell
+git clone https://github.com/lif314/Monica.git
+```
 
 - install
 ```shell
 npm i
 ```
 
-- install electron
+- install electron(If you run `npm i` and the installation fails)
 ```shell
  cd .\node_modules\electron\
 
@@ -29,7 +32,6 @@ npm i
 ```shell
 npm start
 ```
-
 
 ## What you can see
 - AI Anchor(Half mode)
@@ -50,7 +52,24 @@ npm start
 
 
 - Model library
+![img7](./docs/img/7.png)
+
+- Model Details
+
+![img8](./docs/img/8.png)
 
 
+## Use in Tencent meetings
+- Download  Plugin: You need the virtual camera plug-in to access the Tencent meeting, I use OBS Studio, you can download it from the link below.
+    - Link：https://pan.baidu.com/s/1eEaKGa43v2zEt97EjLLi2A 
+    - Extraction Code：akt7
 
+- Install: Run the exe file and plugin to install
+- Setting up OBS Studio
 
+![img5](./docs/img/5.png)
+
+- Set up in Tencent Meeting
+> If the `OBS Virtual Camera` option does not appear, please re-run the OBS plugin and restart Tencent Meeting.
+
+![img6](./docs/img/6.png)
