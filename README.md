@@ -7,8 +7,8 @@ Monica, named after a character in my favorite show "Friends", is a stunning vir
 ## Technologies
 - [MediaPipe](https://google.github.io/mediapipe/): Face Detection, Face Mesh, Iris Detection, Hand Detection, Pose Detection, Holistic Detection
 - [Electron](https://www.electronjs.org/): Build cross-platform desktop apps with JavaScript, HTML, and CSS
-- [kalidokit](https://github.com/yeemachine/kalidokit):Kalidokit is a blendshape and kinematics solver for Mediapipe/Tensorflow.js face, eyes, pose, and hand tracking models, compatible with Facemesh, Blazepose, Handpose, and Holistic. It takes predicted 3D landmarks and calculates simple euler rotations and blendshape face values.
-- Reference: [vtuber](https://github.com/YunYouJun/vtuber),  [Amazing_MediaPipe_Tools](https://github.com/lif314/Amazing_MediaPipe_Tools), [SysMocap](https://github.com/xianfei/SysMocap), [Material Design](https://m3.material.io/)
+- [kalidokit](https://github.com/yeemachine/kalidokit): Kalidokit is a blendshape and kinematics solver for Mediapipe/Tensorflow.js face, eyes, pose, and hand tracking models, compatible with Facemesh, Blazepose, Handpose, and Holistic. It takes predicted 3D landmarks and calculates simple euler rotations and blendshape face values.
+- Reference: [vtuber](https://github.com/YunYouJun/vtuber),  [Amazing_MediaPipe_Tools](https://github.com/lif314/Amazing_MediaPipe_Tools),  [Material Design](https://m3.material.io/)
 
 ## How to run 
 
