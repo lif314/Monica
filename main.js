@@ -96,7 +96,7 @@ if (argv.bsmode) {
     if (!fs.existsSync(_path_dir)) {
         try {
             fs.mkdirSync(_path_dir);
-        } catch (e) {}
+        } catch (e) { }
     }
     storage.setStoragePath(_path);
 
@@ -208,7 +208,7 @@ if (argv.bsmode) {
         // and load the index.html of the app.
         viewer.loadFile("modelview/modelview.html");
         require("@electron/remote/main").enable(viewer.webContents);
-        
+
         // Emitted when the window is closed.
         viewer.on("closed", function () {
             viewer = null;

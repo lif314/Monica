@@ -42,21 +42,20 @@
 <body>
     <!-- 虚拟人物信息 父元素 -->
     <div id="model" style="
-                width: 90%;
+                width: 100%;
                 border-radius: 10px;
                 height: fit-content;
-                top: 10px;
-                left: 5%;
+                left: 0%;
                 overflow: hidden;
                 position: relative;
-                background-image: url(../models/bg/bg1.jpg);
+                background-image: url(../models/bg/bg2.jpg);
                 background-size:cover;
             ">
 
         <!-- 展示用户摄像头信息 -->
         <div class="preview" style="
         position: absolute;
-        top: 85%;
+        top: 80%;
         left: 85%;
         ">
             <!-- canvas for show body skeleton -->
@@ -93,16 +92,16 @@
                 border-radius: 10px;
                 backdrop-filter: blur(20px) saturate(1.8);
             " id="loading">
-            正在初始化，请稍后
+            Initializing, please wait...
         </div>
 
 
-        <div id="status" style="position: absolute; top: 85%; left: 1%">
+        <div id="status" style="position: absolute; top: 80%; left: 25%">
             <span style="position: absolute; left: 10px">Render</span>
             <span style="position: absolute; left: 100px">Mocap</span>
         </div>
 
-        <div id="controller" style="position: absolute; top: 95%; left: 40%">
+        <div id="controller" style="position: absolute; top: 85%; left: 55%">
             <div style="
                     display: inline-block;
                     margin-left: -85px;
@@ -110,7 +109,7 @@
                     position: absolute;
                 ">
                 <em class="mdui-icon material-icons" style="transform: scale(0.8)">videocam</em><span
-                    style="font-size: 12px; margin-left: 5px">相机视角</span>
+                    style="font-size: 12px; margin-left: 5px">Camera:</span>
             </div>
 
             <div class="targetButton mdui-ripple" v-bind:class="{'mdui-color-theme':target == 'full'}"
@@ -119,7 +118,7 @@
                     <em class="mdui-icon material-icons"
                         style="transform: scale(0.8); margin-top: -3px">accessibility</em>
                 </div>
-                <span>全身</span>
+                <span>Full</span>
             </div>
             <div class="targetButton mdui-ripple" v-bind:class="{'mdui-color-theme':target == 'half'}"
                 onclick="changeTarget('half')">
@@ -127,22 +126,18 @@
                     <em class="mdui-icon material-icons"
                         style="transform: scale(1.2); margin-top: 3px">accessibility</em>
                 </div>
-                <span>半身</span>
+                <span>Half</span>
             </div>
             <div class="targetButton mdui-ripple" v-bind:class="{'mdui-color-theme':target == 'face'}"
                 onclick="changeTarget('face')">
                 <div class="my-icon">
                     <em class="mdui-icon material-icons" style="transform: scale(1.2)">person</em>
                 </div>
-                <span>特写</span>
+                <span>Face</span>
             </div>
-            <!-- <div class="targetButton mdui-ripple" v-bind:class="{'mdui-color-theme':target == 'face'}"
-                onclick="hiddenVideo()">
-                <div class="my-icon">
-                    <em class="mdui-icon material-icons" style="transform: scale(1.2)">person</em>
-                </div>
-                <span>隐藏</span>
-            </div> -->
+            <div class="targetButton mdui-ripple" onclick="changeBg()">
+                <span>&nbsp;&nbsp; <-BG-></span>
+            </div>
         </div>
 
     </div>

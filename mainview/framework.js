@@ -189,7 +189,7 @@ if (typeof require != "undefined") {
     var app = new Vue({
         el: "#vue-mount",
         data: {
-            tab: "model",
+            tab: "render",  // 控制起始页面
             builtIn: builtInModels,
             selectModel: localStorage.getItem('selectModel') ? localStorage.getItem('selectModel') : JSON.stringify(builtInModels[0]),
             language: languages[globalSettings.ui.language],
@@ -284,7 +284,7 @@ if (typeof require != "undefined") {
             properties: ["openFile"],
             filters: [
                 {
-                    name: "视频文件",
+                    name: "Video File",
                     extensions: ["mp4", "webm"],
                 },
             ],
@@ -502,26 +502,26 @@ if (typeof require != "undefined") {
                 name: "Monica: Embrace another self in the network",
             },
             titlebar: {
-                modelLib: "模型库",
-                mocap: "动作捕捉",
+                modelLib: "Model",
+                mocap: "AI Vubter",
                 settings: "monica",
             },
             tabModelLib: {
-                userModel: "用户模型",
-                buildinModel: "内建模型",
-                optAdd: "导入",
+                userModel: "User Models",
+                buildinModel: "Built-in Models",
+                optAdd: "Import",
             },
             tabMocap: {
-                chooseModel: "选择模型：",
-                dataSource: "数据源：",
-                camera: "摄像头",
-                videoFile: "视频文件",
-                start: "开始",
-                stop: "停止",
+                chooseModel: "Select:  ",
+                dataSource: "Source: ",
+                camera: "Camera",
+                videoFile: "Video",
+                start: "Start",
+                stop: "Stop",
             },
             tabSettings: {
                 mediapipe: {
-                    name: "动作捕捉",
+                    name: "AI Vubter",
                 }
             },
         },
@@ -623,6 +623,9 @@ if (typeof require != "undefined") {
             },
         },
     });
+
+
+
 
     window.sysmocapApp = app;
 

@@ -717,6 +717,21 @@ function changeTarget(target) {
     }
 }
 
+// 切换背景
+function changeBg(){
+    let imgPathList = [
+        "../models/bg/bg1.jpg",
+        "../models/bg/bg2.jpg",
+        "../models/bg/bg3.jpg",
+        "../models/bg/bg4.jpg",
+        "../models/bg/bg5.jpg",
+        "../models/bg/bg6.jpg",
+    ]
+
+    let index = Math.round(Math.random()*(imgPathList.length-1));
+    document.getElementById("model").style.backgroundImage=`url('${imgPathList[index]}')`;
+}
+
 // keyborad control camera position
 document.addEventListener("keydown", (event) => {
     var step = 0.1;

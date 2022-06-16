@@ -169,13 +169,13 @@
                             <i class="mdui-icon material-icons">color_lens</i>
                             <div class="mdui-list-item-content" style="margin-left: 30px">
                                 <span v-show="model.type == 'vrm'">{{languages.modelVierer.modifyDecoration}}</span>
-                                <span v-show="model.type != 'vrm'">编辑骨骼绑定信息</span>
+                                <span v-show="model.type != 'vrm'">Edit Bone Rig Information</span>
                             </div>
                         </li>
                         <li class="mdui-list-item mdui-ripple" v-on:click="showOpts2 = true">
                             <i class="mdui-icon material-icons">mode_edit</i>
                             <div class="mdui-list-item-content" style="margin-left: 30px">
-                                编辑虚拟形象信息
+                                Edit Avatar Information
                             </div>
                         </li>
                     </ul>
@@ -206,7 +206,7 @@
                             <i class="mdui-icon material-icons">
                                 format_paint</i>
                             <div class="mdui-list-item-content" style="margin-left: 30px">
-                                隐藏 {{k}}
+                                Hide {{k}}
                             </div>
                         </li>
                     </ul>
@@ -263,7 +263,7 @@
                 settings: globalSettings,
                 loaded: false,
                 failed: false,
-                failedText: "加载失败"
+                failedText: "Failed to load"
             },
         });
 
@@ -282,7 +282,7 @@
             const jsonChanged = editor.get()
             if (JSON.stringify(args.model) == JSON.stringify(jsonChanged)) return
             if (args.model.isBuildIn) {
-                app.failedText = '内建模型不能修改！'
+                app.failedText = 'Built-in models cannot be modified!'
                 app.failed = true
                 return
             }
@@ -300,21 +300,21 @@
             if (
                 obj
                     .querySelector(".mdui-list-item-content")
-                    .innerText.includes("隐藏")
+                    .innerText.includes("Hide")
             ) {
                 scene.getObjectByName(k).visible = false;
                 obj.querySelector(".mdui-list-item-content").innerText =
-                    "显示" +
+                    "Show" +
                     obj
                         .querySelector(".mdui-list-item-content")
-                        .innerText.substr(2);
+                        .innerText.substr(4);
             } else {
                 scene.getObjectByName(k).visible = true;
                 obj.querySelector(".mdui-list-item-content").innerText =
-                    "隐藏" +
+                    "Hide" +
                     obj
                         .querySelector(".mdui-list-item-content")
-                        .innerText.substr(2);
+                        .innerText.substr(4);
             }
         }
 
@@ -329,7 +329,7 @@
             document.querySelector("#model").clientHeight
         );
         renderer.setPixelRatio(window.devicePixelRatio);
-        // renderer.setClearColor(0x000000,1); //设置背景颜色
+        renderer.setClearColor(0x000000,1); //设置背景颜色
         document.querySelector("#model").appendChild(renderer.domElement);
 
         // camera
@@ -477,17 +477,17 @@
         gui.hide();
 
         function setupDatGui() {
-            let folder = gui.addFolder("骨骼解析");
+            let folder = gui.addFolder("Bone Analysis");
 
             folder.add(skeletonHelper, "visible");
-            folder.controllers[0].name("展示骨架");
+            folder.controllers[0].name("show skeleton");
 
             const bones = skeletonHelper.bones;
 
             for (let i = 0; i < bones.length; i++) {
                 const bone = bones[i];
 
-                folder = gui.addFolder("骨骼" + bone.name);
+                folder = gui.addFolder("skeleton" + bone.name);
 
                 if (i == 0) {
                     folder.add(
